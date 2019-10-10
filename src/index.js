@@ -3,8 +3,6 @@ function eval() {
     return;
 }
 
-// " 11 - 92 + 48 / (  (  12 / 92 + (  53 / 74 / 22 + (  61 / 24 / 42 - (  13 * 85 + 100 / 77 / 11  ) + 89  ) + 9  ) + 87  ) / 91 * 92  ) "
-
 let checkBrackets = (str, bracketsConfig) => {
 
     function MakeHumanBrackets( srcBracketsConfig ){
@@ -138,7 +136,6 @@ let parseExpression = ( anExpression ) => {
                 currChar = exprNoSpaces[ i ];
             }
             currLiteral = currLiteral.concat( ' ' );
-            // i--;
         }
 
         if( isOperator( currChar ) ){
@@ -148,7 +145,6 @@ let parseExpression = ( anExpression ) => {
                 opStack.push( currChar );
 
             } else if( currChar == ')' ) {
-                // Closing Bracket
 
                 let tmpChar = '';
                 while( opStack.size() && tmpChar !== '(' ){
@@ -161,11 +157,9 @@ let parseExpression = ( anExpression ) => {
                 if( opStack.peek() == '(' ){ opStack.pop() ; }
 
             } else {
-                // currChar is REAL operator
                 let notPushed = true;
 
                 while(
-                    // was if previously 
                     opStack.size() && 
                     ( getPriority( currChar ) <= getPriority( opStack.peek() ) )
                 ){
@@ -174,11 +168,11 @@ let parseExpression = ( anExpression ) => {
 
                 if( notPushed ){ opStack.push( currChar ); }
 
-            } // currChar : not braces, just operators
-        } // operators including braces
+            }
+        }
 
 
-    } // main for
+    }
 
 
     while( opStack.size() ){
@@ -225,7 +219,7 @@ let RPNEvaluate = ( RPNExpression ) => {
             }
             tmpStack.push( tmpResult );
         }
-    } // main for 
+    }
 
     return tmpStack.peek();
 }
@@ -257,9 +251,6 @@ function expressionCalculator(expr) {
 
     let exprRPN = parseExpression( expr );
     result = RPNEvaluate( exprRPN );
-    // console.log( '#expressionCalculator, @expr:  \n', expr );
-    // console.log( '\n \n #expressionCalculator, @exprRPN:  \n', exprRPN );
-    // console.log( '\n \n #expressionCalculator, @result:  \n', result );
     return result;
 }
 
