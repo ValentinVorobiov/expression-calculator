@@ -164,15 +164,12 @@ let parseExpression = ( anExpression ) => {
                 // currChar is REAL operator
                 let notPushed = true;
 
-                if( 
+                while(
+                    // was if previously 
                     opStack.size() && 
                     ( getPriority( currChar ) <= getPriority( opStack.peek() ) )
                 ){
                     currLiteral  = currLiteral.concat( opStack.pop(),  ' ');
-                    if( getPriority( opStack.peek() ) == getPriority( currChar ) ){
-                        opStack.push( currChar );
-                        notPushed = false;
-                    }
                 }
 
                 if( notPushed ){ opStack.push( currChar ); }
@@ -198,6 +195,9 @@ let RPNEvaluate = ( RPNExpression ) => {
 
     for( let i=0; i<RPNExpression.length; i++ ) {
         let currCh = RPNExpression[ i ];
+        if( ' ='.indexOf( currCh ) > -1 ){
+            continue;
+        }
         
         if( isDigit( currCh ) ){
             let tmpStr = '';
@@ -230,22 +230,37 @@ let RPNEvaluate = ( RPNExpression ) => {
     return tmpStack.peek();
 }
 
+let getOnlyBrackets = ( anExpression ) => {
+    let strBrackets = '';
+
+    for( let i=0; i< anExpression.length; i++ ){
+        if( '()'.indexOf( anExpression[ i ] ) !== -1 ){
+            strBrackets += anExpression[ i ];
+        }
+    }
+    return strBrackets;
+}
+
 
 function expressionCalculator(expr) {
     let tmpStack = new JSStack();
     let result = 0;
-    let exprRPN = parseExpression( expr );
+    const exprBracketsConfig = [['(', ')']];
+    let strBracketsTest = getOnlyBrackets( expr );
 
 
-    if( hasBrackets( expr ) && !checkBrackets( expr, [ ['(', ')'] ] ) ){
+    if( strBracketsTest.length &&
+        !checkBrackets( strBracketsTest, exprBracketsConfig ) 
+    ){
         throw new Error( 'ExpressionError: Brackets must be paired' );
     }
 
+    let exprRPN = parseExpression( expr );
     result = RPNEvaluate( exprRPN );
+    // console.log( '#expressionCalculator, @expr:  \n', expr );
+    // console.log( '\n \n #expressionCalculator, @exprRPN:  \n', exprRPN );
+    // console.log( '\n \n #expressionCalculator, @result:  \n', result );
     return result;
-
-
-
 }
 
 module.exports = {
